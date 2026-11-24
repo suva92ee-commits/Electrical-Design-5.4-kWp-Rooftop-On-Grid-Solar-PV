@@ -1,50 +1,47 @@
+ 5.4 kWp Rooftop Solar PV: Electrical Design
 
-Electrical Design: 5.4 kWp Rooftop On-Grid Solar PV
+I'm an electrical engineer learning AutoCAD Electrical, and I wanted one project that shows how a rooftop solar system is actually designed from start to finish. This is that project: a 5.4 kWp, single-phase, grid-connected system for an imaginary house in Kolkata, with a calculation workbook and a set of 8 drawings.
 
-A single-phase, net-metered rooftop solar design worked out the way an EPC design desk would: sizing, string design, cable and protection selection, earthing, and a full drawing set. Everything is tied to one calculation workbook, so a number changed in one place changes everywhere.
+It's a practice design, not meant for construction.
 
-> Practice project for an illustrative house in Kolkata. Not for construction.
+What the system looks like
 
-The design in numbers
+- **Panels:** 10 modules of 540 Wp, arranged as 2 strings of 5, tilted 22° facing south
+- **Inverter:** 5 kW single-phase with 2 MPPT inputs
+- **Cables:** 4 sq.mm copper on the DC side, 3C x 10 sq.mm copper on the AC side
+- **Voltage drop:** about 0.85 % on DC and 0.83 % on AC, both under 1 %
+- **Protection:** DC MCB 20 A per string, AC MCB 32 A, RCCB 40 A / 30 mA, and surge protection on both sides
+- **Earthing and lightning:** 4 bonded earth pits and 2 air terminals
+- **Expected output:** around 7,400 kWh a year
 
-- **Array:** 10 x 540 Wp = **5.4 kWp**, 2 strings x 5 modules, 22° tilt, south
-- **Inverter:** 5 kW, single-phase, 2 MPPT (DC/AC ratio 1.08)
-- **String check:** Voc 260.9 V at 5 °C (limit 600 V); Vmp 175-223 V (MPPT window 90-550 V)
-- **Cables:** 4 sq.mm Cu on DC, 3C x 10 sq.mm Cu on AC
-- **Voltage drop:** DC 0.85 %, AC 0.83 % (both under 1 %)
-- **Protection:** DC MCB 20 A per string, AC MCB 32 A, RCCB 40 A / 30 mA, Type 2 SPD on both sides
-- **Earthing and LPS:** 4 bonded earth pits, 2 air terminals, rolling-sphere check passed
-- **Expected output:** about 7,400 kWh/year (PR 76.6 %)
+What's in this repo
 
-What's inside
+- **`calculations/`** has the Excel workbook. It covers string sizing, row spacing, cable sizing, protection ratings, earthing, generation, BOM and payback. Blue cells are inputs, everything else is a formula.
+- **`drawings/`** has 8 A3 sheets in DXF (for AutoCAD) and PDF:
+  - E-01 Cover, index and design data
+  - E-02 DC single line diagram
+  - E-03 AC single line diagram
+  - E-04 Roof plan and row spacing
+  - E-05 Earthing and lightning protection
+  - E-06 DCDB / ACDB wiring
+  - E-07 Equipment mounting and routing
+  - E-08 Cable schedule and BOM
 
-- **`calculations/Solar_PV_Design_Calculations.xlsx`**: string sizing, row spacing, cable sizing and voltage drop, protection ratings, earthing, generation, BOM and payback. Inputs are in blue on the Assumptions sheet; everything else is a live formula.
-- **`drawings/`**: 8 A3 sheets as DXF (open in AutoCAD) and PDF.
-  - E-01 cover and index
-  - E-02 DC single line
-  - E-03 AC single line
-  - E-04 roof plan and row spacing
-  - E-05 earthing and lightning protection
-  - E-06 DCDB/ACDB wiring
-  - E-07 equipment mounting and routing
-  - E-08 cable schedule and BOM
+Why I used Python
 
-Why Python
+In a solar design the same numbers show up everywhere: module count, string length, cable size, breaker rating. If you change one and forget to update a drawing, the paperwork stops matching. I used Python so that can't happen.
 
-A solar design repeats the same numbers in many places: module count, string length, cable size, breaker rating. In a normal workflow these get retyped on every drawing, and one missed edit leaves the drawings disagreeing with the calculation. I used Python to avoid that.
+- **openpyxl** builds the workbook with real formulas, so Excel is the one place the numbers come from.
+- **ezdxf** reads those values and draws the DXF sheets.
+- **matplotlib** turns the same drawings into PDFs.
 
-- **openpyxl** builds the Excel workbook with real formulas, not pasted values. The workbook is the single source of truth.
-- **LibreOffice recalculation** evaluates all formulas and confirms there are no errors, so the drawings read calculated values.
-- **ezdxf** reads those values and draws the DXF sheets: single lines, roof plan, earthing layout, wiring, schedules.
-- **matplotlib** renders the same drawings to PDF.
+Change an input once and the calculation, drawings and BOM all follow. The drawings are script-generated, and I checked all 8 DXF files for errors (none found).
 
-Result: change the module count or a cable length once, and the calculation, drawings and BOM stay consistent. The drawings are script-generated, then audited as DXF files (0 errors on all 8 sheets).
+Things to keep in mind
 
-Assumptions to know about
+- Module and inverter data are typical values, not from a specific datasheet.
+- Sunshine hours, household load, tariff and subsidy are my own assumptions, so check them before trusting the cost and payback figures.
+- Cable ratings are indicative, and a real project would need a proper lightning risk assessment.
+- Standards such as IEC 62548, IEC 60364-7-712 and IEC 62305 were used as design reference only, not as a compliance claim.
 
-- Module and inverter data are typical values for the class, not a specific datasheet.
-- Monthly sunshine hours, household load, rates, tariff and subsidy are my assumptions. Check them before trusting the cost or payback numbers.
-- Cable ampacities are indicative, and the lightning layout needs a proper risk assessment on a real job.
-- Design basis only, not a compliance claim: IEC 62548, IEC 60364-7-712, IEC 60364-5-52, IEC 62305, IS 3043.
-
-Built by Suvadeep Mallik, B.Tech Electrical Engineering.
+Suvadeep Mallik, B.Tech Electrical Engineering
